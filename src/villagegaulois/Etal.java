@@ -1,4 +1,4 @@
-package villagegaulois;
+	package villagegaulois;
 
 import personnages.Gaulois;
 
@@ -24,6 +24,8 @@ public class Etal {
 		quantiteDebutMarche = quantite;
 		etalOccupe = true;
 	}
+	
+	
 
 	public String libererEtal() {
 		etalOccupe = false;

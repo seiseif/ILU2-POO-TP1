@@ -1,5 +1,7 @@
 package villagegaulois;
 
+import java.util.Iterator;
+
 import personnages.Chef;
 import personnages.Gaulois;
 
@@ -8,11 +10,87 @@ public class Village {
 	private Chef chef;
 	private Gaulois[] villageois;
 	private int nbVillageois = 0;
-
-	public Village(String nom, int nbVillageoisMaximum) {
+	private Marche marche;
+	
+	public Village(String nom, int nbVillageoisMaximum, int nbEtals) {
 		this.nom = nom;
 		villageois = new Gaulois[nbVillageoisMaximum];
+		marche = new Marche(nbEtals);
 	}
+	
+	private static class Marche {
+		private Etal[] etals;
+		private Marche(int NbEtals) {
+			etals = new Etal[NbEtals];
+			for (int i = 0; i < NbEtals; i++) {
+				etals[i] = new Etal();
+			}
+		}
+		
+		private void utiliserEtal(int indiceEtal, Gaulois vendeur,String produit, int nbProduit) {
+			if (!etals[indiceEtal].isEtalOccupe()) {
+				etals[indiceEtal].occuperEtal(vendeur, produit, nbProduit);
+			}
+		}
+		
+		private int trouverEtalLibre() {
+			for (int i = 0; i < etals.length; i++) {
+				if (!etals[i].isEtalOccupe()) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+		Etal[] trouverEtals(String produit) {
+			int count = 0;
+			for (int i = 0; i < etals.length; i++) {
+				if (etals[i].contientProduit(produit)) {
+					count++;
+				}
+			}
+			
+			if (count > 0) {
+				Etal[] pr = new Etal[count];
+				int numEtal = 0;
+				for (int i = 0; i < etals.length&&numEtal < count; i++) {
+					if (etals[i].contientProduit(produit)) {
+						pr[numEtal] = etals[i];
+						numEtal++;
+					}
+				}
+				return pr;
+			}else {
+				return null;
+			}
+		}
+		
+		private Etal trouverVendeur(Gaulois gaulois) {
+			for (int i = 0; i < etals.length; i++) {
+				if (etals[i].getVendeur() == gaulois) {
+					return etals[i];
+				}
+			}
+			return null;
+		}
+		
+		private void afficherMarche() {
+			int nbEtalVide = 0;
+			for (int i = 0; i < etals.length; i++) {
+				if (etals[i].isEtalOccupe()){
+					etals[i].afficherEtal();
+				}
+				else {
+					nbEtalVide++;
+				}
+			}
+			if (nbEtalVide != 0) {
+				System.out.println("il reste " + nbEtalVide + " etals non utilises dans le marche.\n");
+			}
+		}
+	}
+	
+
 
 	public String getNom() {
 		return nom;
@@ -20,6 +98,24 @@ public class Village {
 
 	public void setChef(Chef chef) {
 		this.chef = chef;
+	}
+	
+	public String installerVendeur(Gaulois vendeur, String produit,int nbProduit) {
+		int marcheTrouve = marche.trouverEtalLibre();
+		marche.utiliserEtal(marcheTrouve, vendeur, produit, nbProduit);
+		StringBuilder chaine = new StringBuilder();
+		chaine.append(vendeur.getNom() + " cherche un endroit pour vendre " + nbProduit +" "+ produit + "\n");
+		chaine.append("Le vendeur " + vendeur.getNom() + " vend des " + produit + " à l'étal n°" +marcheTrouve+ ".\n");
+		return chaine.toString();
+	}
+	
+	public String rechercherVendeursProduit(String produit) {
+		if (marche.trouverEtals(produit)==null) {
+			return "Il n'y a pas de vendeur qui propose des " + produit + " au marché.";
+		}else {
+			return null;
+		}
+		
 	}
 
 	public void ajouterHabitant(Gaulois gaulois) {
