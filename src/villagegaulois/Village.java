@@ -80,19 +80,21 @@ public class Village {
 		
 		
 		
-		public void afficherMarche() {
+		private String afficherMarche() {
+			StringBuilder chaine = new StringBuilder();
 			int nbEtalVide = 0;
 			for (int i = 0; i < etals.length; i++) {
-				if (etals[i].isEtalOccupe()){
-					etals[i].afficherEtal();
-				}
-				else {
+				if (etals[i].isEtalOccupe()) {
+					chaine.append(etals[i].afficherEtal());
+				} else {
 					nbEtalVide++;
 				}
 			}
-			if (nbEtalVide != 0) {
-				System.out.println("il reste " + nbEtalVide + " etals non utilises dans le marche.\n");
+			if (nbEtalVide > 0) {
+				chaine.append("Il reste " + nbEtalVide
+						+ " étals non utilisés dans le marché.\n");
 			}
+			return chaine.toString();
 		}
 	}
 	
@@ -165,6 +167,14 @@ public class Village {
 			}
 		}
 		return null;
+	}
+	
+	public String afficherMarche() {
+		StringBuilder chaine = new StringBuilder();
+		chaine.append("Le marché du village \"" + nom
+				+ "\" possède plusieurs étals :\n");
+		chaine.append(marche.afficherMarche());
+		return chaine.toString();
 	}
 
 	public String afficherVillageois() {
